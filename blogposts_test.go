@@ -2,33 +2,34 @@ package websitebackend_test
 
 import (
 	"errors"
+	"github.com/trudeaujt/website-backend"
 	"io/fs"
 	"reflect"
 	"testing"
 	"testing/fstest"
 )
 
-func TestNewBlogPosts(t *testing.T) {
+func TestNewwebsitebackend(t *testing.T) {
 	t.Run("it returns posts equal to the number of files", func(t *testing.T) {
-		fs := fstest.MapFS{
+		testFs := fstest.MapFS{
 			"hello world.md":  {Data: []byte("Title: hi there")},
 			"hello-world2.md": {Data: []byte("Title: ohayou gozaimasu")},
 		}
 
-		posts, err := websitebackend.NewPostsFromFS(fs)
+		posts, err := websitebackend.NewPostsFromFS(testFs)
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		if len(posts) != len(fs) {
-			t.Errorf("got %d posts want %d posts", len(posts), len(fs))
+		if len(posts) != len(testFs) {
+			t.Errorf("got %d posts want %d posts", len(posts), len(testFs))
 		}
 	})
 	t.Run("it returns errors when something goes wrong", func(t *testing.T) {
-		fs := StubFailingFS{}
+		testFs := StubFailingFS{}
 
-		posts, err := blogposts.NewPostsFromFS(fs)
+		posts, err := websitebackend.NewPostsFromFS(testFs)
 
 		if err == nil {
 			t.Error("expected an error, didn't get one")
@@ -38,17 +39,17 @@ func TestNewBlogPosts(t *testing.T) {
 		}
 	})
 	t.Run("it returns the post title", func(t *testing.T) {
-		fs := fstest.MapFS{
+		testFs := fstest.MapFS{
 			"hello world.md":  {Data: []byte("Title: Post 1")},
 			"hello-world2.md": {Data: []byte("Title: Post 2")},
 		}
 
-		posts, err := blogposts.NewPostsFromFS(fs)
+		posts, err := websitebackend.NewPostsFromFS(testFs)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		assertPost(t, posts[0], blogposts.Post{
+		assertPost(t, posts[0], websitebackend.Post{
 			Title: "Post 1",
 		})
 	})
@@ -60,17 +61,17 @@ Description: Description 1`
 Description: Description 2`
 		)
 
-		fs := fstest.MapFS{
+		testFs := fstest.MapFS{
 			"hello world.md":  {Data: []byte(firstBody)},
 			"hello-world2.md": {Data: []byte(secondBody)},
 		}
 
-		posts, err := blogposts.NewPostsFromFS(fs)
+		posts, err := websitebackend.NewPostsFromFS(testFs)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		assertPost(t, posts[0], blogposts.Post{
+		assertPost(t, posts[0], websitebackend.Post{
 			Title:       "Post 1",
 			Description: "Description 1",
 		})
@@ -85,17 +86,17 @@ Description: Description 2
 Tags: tdd2, go2`
 		)
 
-		fs := fstest.MapFS{
+		testFs := fstest.MapFS{
 			"hello world.md":  {Data: []byte(firstBody)},
 			"hello-world2.md": {Data: []byte(secondBody)},
 		}
 
-		posts, err := blogposts.NewPostsFromFS(fs)
+		posts, err := websitebackend.NewPostsFromFS(testFs)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		assertPost(t, posts[0], blogposts.Post{
+		assertPost(t, posts[0], websitebackend.Post{
 			Title:       "Post 1",
 			Description: "Description 1",
 			Tags:        []string{"tdd", "go"},
@@ -118,16 +119,16 @@ B
 C`
 		)
 
-		fs := fstest.MapFS{
+		testFs := fstest.MapFS{
 			"hello world.md":  {Data: []byte(firstBody)},
 			"hello-world2.md": {Data: []byte(secondBody)},
 		}
 
-		posts, err := blogposts.NewPostsFromFS(fs)
+		posts, err := websitebackend.NewPostsFromFS(testFs)
 		if err != nil {
 			t.Fatal(err)
 		}
-		assertPost(t, posts[0], blogposts.Post{
+		assertPost(t, posts[0], websitebackend.Post{
 			Title:       "Post 1",
 			Description: "Description 1",
 			Tags:        []string{"tdd", "go"},
@@ -152,16 +153,16 @@ B
 C`
 		)
 
-		fs := fstest.MapFS{
+		testFs := fstest.MapFS{
 			"hello world.md":  {Data: []byte(firstBody)},
 			"hello-world2.md": {Data: []byte(secondBody)},
 		}
 
-		posts, err := blogposts.NewPostsFromFS(fs)
+		posts, err := websitebackend.NewPostsFromFS(testFs)
 		if err != nil {
 			t.Fatal(err)
 		}
-		assertPost(t, posts[0], blogposts.Post{
+		assertPost(t, posts[0], websitebackend.Post{
 			Title:       "Post 1",
 			Description: "Description 1",
 			Tags:        []string{"tdd", "go"},
@@ -180,18 +181,18 @@ First line
 Second line`
 		)
 
-		fs := fstest.MapFS{
+		testFs := fstest.MapFS{
 			"hello world.md": {Data: []byte(firstBody)},
 		}
 
-		_, err := blogposts.NewPostsFromFS(fs)
+		_, err := websitebackend.NewPostsFromFS(testFs)
 		if err.Error() != "invalid parameter: this-should-throw-an-error: yes" {
 			t.Errorf("expected an invalid parameter error, got %v", err)
 		}
 	})
 }
 
-func assertPost(t *testing.T, got blogposts.Post, want blogposts.Post) {
+func assertPost(t *testing.T, got websitebackend.Post, want websitebackend.Post) {
 	t.Helper()
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("got %+v want %+v", got, want)
@@ -200,6 +201,6 @@ func assertPost(t *testing.T, got blogposts.Post, want blogposts.Post) {
 
 type StubFailingFS struct{}
 
-func (s StubFailingFS) Open(name string) (fs.File, error) {
+func (s StubFailingFS) Open(string) (fs.File, error) {
 	return nil, errors.New("always fails")
 }
