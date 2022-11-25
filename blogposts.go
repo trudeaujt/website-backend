@@ -1,4 +1,4 @@
-package websitebackend
+package blogposts
 
 import (
 	"io/fs"
@@ -28,7 +28,13 @@ func getPost(fileSystem fs.FS, fileName string) (Post, error) {
 	if err != nil {
 		return Post{}, err
 	}
-	defer postFile.Close()
+	defer func(postFile fs.File) {
+		e := postFile.Close()
+		if e != nil {
+			err = e
+		}
+	}(postFile)
 
-	return newPost(postFile)
+	post, err := newPost(postFile)
+	return post, err
 }

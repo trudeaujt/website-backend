@@ -1,4 +1,4 @@
-package websitebackend
+package blogposts
 
 import (
 	"bufio"
@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"strings"
 )
 
@@ -47,7 +48,11 @@ func readBody(scanner *bufio.Scanner) string {
 	body := bytes.Buffer{}
 
 	for scanner.Scan() {
-		fmt.Fprintln(&body, scanner.Text())
+		_, err := fmt.Fprintln(&body, scanner.Text())
+		if err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, "Fprintln: %v\n", err)
+		}
+
 	}
 	return strings.TrimSuffix(body.String(), "\n")
 }
