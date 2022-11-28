@@ -25,10 +25,7 @@ func NewBlogServer(posts []Post) *BlogServer {
 
 func (b *BlogServer) handlePosts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", jsonContentType)
-	err := json.NewEncoder(w).Encode(b.posts)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	js, _ := json.Marshal(b.posts)
 	w.WriteHeader(http.StatusOK)
+	w.Write(js)
 }

@@ -41,7 +41,7 @@ func TestServer(t *testing.T) {
 func assertBody(t *testing.T, got []byte, want []blogposts.Post) {
 	t.Helper()
 	j, _ := json.Marshal(want)
-	j = append(j, 10) // add a newline. json.Marshal doesn't add one, while json.Encode does.
+	//j = append(j, 10) // add a newline. json.Marshal doesn't add one, while json.Encode does.
 	if !reflect.DeepEqual(got, j) {
 		t.Errorf("got %v want %v", got, j)
 	}
