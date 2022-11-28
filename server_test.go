@@ -14,12 +14,14 @@ func TestServer(t *testing.T) {
 	posts := []blogposts.Post{
 		{
 			Title:       "A Title",
+			Slug:        "a_title",
 			Description: "Description",
 			Tags:        []string{"one", "two"},
 			Body:        "Body",
 		},
 		{
 			Title:       "A Title2",
+			Slug:        "a_title2",
 			Description: "Description2",
 			Tags:        []string{"two", "three"},
 			Body:        "Body2",
@@ -40,10 +42,10 @@ func TestServer(t *testing.T) {
 
 func assertBody(t *testing.T, got []byte, want []blogposts.Post) {
 	t.Helper()
-	j, _ := json.Marshal(want)
+	js, _ := json.Marshal(want)
 	//j = append(j, 10) // add a newline. json.Marshal doesn't add one, while json.Encode does.
-	if !reflect.DeepEqual(got, j) {
-		t.Errorf("got %v want %v", got, j)
+	if !reflect.DeepEqual(got, js) {
+		t.Errorf("got %v want %v", got, js)
 	}
 }
 

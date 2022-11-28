@@ -39,6 +39,7 @@ C`
 		assertPosts(t, posts, []blogposts.Post{
 			{
 				Title:       "Post 1",
+				Slug:        "post_1",
 				Description: "Description 1",
 				Tags:        []string{"tdd", "go"},
 				Body: `First line
@@ -46,6 +47,7 @@ Second line`,
 			},
 			{
 				Title:       "Post 2",
+				Slug:        "post_2",
 				Description: "Description 2",
 				Tags:        []string{"tdd2", "go2"},
 				Body: `A

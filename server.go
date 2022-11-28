@@ -24,8 +24,11 @@ func NewBlogServer(posts []Post) *BlogServer {
 }
 
 func (b *BlogServer) handlePosts(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("content-type", jsonContentType)
-	js, _ := json.Marshal(b.posts)
+	w.Header().Set("Content-Type", jsonContentType)
+	js, err := json.Marshal(b.posts)
+	if err != nil {
+		http.Error(w, "The server encountered a problem and could not process your request.", http.StatusInternalServerError)
+	}
 	w.WriteHeader(http.StatusOK)
 	w.Write(js)
 }

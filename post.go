@@ -12,6 +12,7 @@ import (
 
 type Post struct {
 	Title       string
+	Slug        string
 	Description string
 	Tags        []string
 	Body        string
@@ -31,6 +32,7 @@ func newPost(postFile io.Reader) (Post, error) {
 		switch parameter[0] {
 		case "Title":
 			post.Title = parameter[1]
+			post.Slug = strings.ToLower(strings.ReplaceAll(post.Title, " ", "_"))
 		case "Description":
 			post.Description = parameter[1]
 		case "Tags":
