@@ -1,7 +1,6 @@
 package blogposts_test
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/trudeaujt/blogposts"
 	"net/http"
@@ -36,16 +35,34 @@ func TestServer(t *testing.T) {
 
 		fmt.Println(res.Body)
 		assertStatus(t, res.Code, http.StatusOK)
-		assertBody(t, res.Body.Bytes(), posts)
+		assertBody(t, res.Body.Bytes(), []byte(`[
+	{
+		"title": "A Title",
+		"slug": "a_title",
+		"description": "Description",
+		"tags": [
+			"one",
+			"two"
+		]
+	},
+	{
+		"title": "A Title2",
+		"slug": "a_title2",
+		"description": "Description2",
+		"tags": [
+			"two",
+			"three"
+		]
+	}
+]`,
+		))
 	})
 }
 
-func assertBody(t *testing.T, got []byte, want []blogposts.Post) {
+func assertBody(t *testing.T, got, want []byte) {
 	t.Helper()
-	js, _ := json.Marshal(want)
-	//j = append(j, 10) // add a newline. json.Marshal doesn't add one, while json.Encode does.
-	if !reflect.DeepEqual(got, js) {
-		t.Errorf("got %v want %v", got, js)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("got %v want %v", got, want)
 	}
 }
 

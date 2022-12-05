@@ -11,11 +11,11 @@ import (
 )
 
 type Post struct {
-	Title       string
-	Slug        string
-	Description string
-	Tags        []string
-	Body        string
+	Title       string   `json:"title"`
+	Slug        string   `json:"slug"`
+	Description string   `json:"description"`
+	Tags        []string `json:"tags"`
+	Body        string   `json:"-"`
 }
 
 func newPost(postFile io.Reader) (Post, error) {
@@ -58,3 +58,17 @@ func readBody(scanner *bufio.Scanner) string {
 	}
 	return strings.TrimSuffix(body.String(), "\n")
 }
+
+//func (p Post) MarshalJSON() ([]byte, error) {
+//	type PostAlias Post
+//
+//	aux := struct {
+//		PostAlias
+//		Body string `json:"-"`
+//	}{
+//		PostAlias: PostAlias(p),
+//		Body:      p.Body,
+//	}
+//
+//	return json.Marshal(aux)
+//}
