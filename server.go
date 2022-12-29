@@ -17,7 +17,8 @@ func NewBlogServer(posts []Post) *BlogServer {
 
 	srv.posts = posts
 	router := http.NewServeMux()
-	router.Handle("/posts", http.HandlerFunc(srv.handlePosts))
+	router.Handle("/posts", http.HandlerFunc(srv.handleAllPosts))
+	router.Handle("/post/:slug", http.HandlerFunc(srv.handleSinglePost))
 	/**
 	/posts - all posts
 	/posts/1 - first 10?
@@ -29,7 +30,7 @@ func NewBlogServer(posts []Post) *BlogServer {
 	return srv
 }
 
-func (b *BlogServer) handlePosts(w http.ResponseWriter, r *http.Request) {
+func (b *BlogServer) handleAllPosts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", jsonContentType)
 
 	js, err := json.MarshalIndent(b.posts, "", "\t")
@@ -42,6 +43,8 @@ func (b *BlogServer) handlePosts(w http.ResponseWriter, r *http.Request) {
 
 func (b *BlogServer) handleSinglePost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", jsonContentType)
-	//TODO implement a PostStore and create a getPost function on it to return a single post.
-	//Don't want to put this logic into the Post class.
+
+	js, _ := json.MarshalIndent(b.posts[0], "", "\t")
+	w.WriteHeader(http.StatusOK)
+	w.Write(js)
 }

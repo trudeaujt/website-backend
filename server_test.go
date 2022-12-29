@@ -28,12 +28,11 @@ func TestServer(t *testing.T) {
 	}
 	server := blogposts.NewBlogServer(posts)
 
-	t.Run("It returns all the posts as JSON on GET", func(t *testing.T) {
+	t.Run("it returns all the posts as JSON on GET", func(t *testing.T) {
 		req := newAllPostsRequest()
 		res := httptest.NewRecorder()
 		server.ServeHTTP(res, req)
 
-		fmt.Println(res.Body)
 		assertStatus(t, res.Code, http.StatusOK)
 		assertBody(t, res.Body.Bytes(), []byte(`[
 	{
@@ -57,12 +56,36 @@ func TestServer(t *testing.T) {
 ]`,
 		))
 	})
+	t.Run("it returns a single post", func(t *testing.T) {
+		req := newSinglePostRequest("a_title")
+		res := httptest.NewRecorder()
+		server.ServeHTTP(res, req)
+
+		assertStatus(t, res.Code, http.StatusOK)
+		assertBody(t, res.Body.Bytes(), []byte(`[
+	{
+		"title": "A Title",
+		"slug": "a_title",
+		"description": "Description",
+		"tags": [
+			"one",
+			"two"
+		]
+	}`))
+	})
+}
+
+func newSinglePostRequest(slug string) *http.Request {
+	url := fmt.Sprintf("/post/%s", slug)
+	print(url)
+	req, _ := http.NewRequest(http.MethodGet, url, nil)
+	return req
 }
 
 func assertBody(t *testing.T, got, want []byte) {
 	t.Helper()
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("got %v want %v", got, want)
+		t.Errorf("got %v want %v", string(got), string(want))
 	}
 }
 
