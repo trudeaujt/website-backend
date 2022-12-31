@@ -2,11 +2,12 @@ package blogposts_test
 
 import (
 	"fmt"
-	"github.com/trudeaujt/blogposts"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"testing"
+
+	"github.com/trudeaujt/blogposts"
 )
 
 func TestServer(t *testing.T) {
@@ -62,8 +63,7 @@ func TestServer(t *testing.T) {
 		server.ServeHTTP(res, req)
 
 		assertStatus(t, res.Code, http.StatusOK)
-		assertBody(t, res.Body.Bytes(), []byte(`[
-	{
+		assertBody(t, res.Body.Bytes(), []byte(`{
 		"title": "A Title",
 		"slug": "a_title",
 		"description": "Description",

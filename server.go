@@ -3,6 +3,7 @@ package blogposts
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 )
 
 const jsonContentType = "application/json"
@@ -18,7 +19,7 @@ func NewBlogServer(posts []Post) *BlogServer {
 	srv.posts = posts
 	router := http.NewServeMux()
 	router.Handle("/posts", http.HandlerFunc(srv.handleAllPosts))
-	router.Handle("/post/:slug", http.HandlerFunc(srv.handleSinglePost))
+	router.Handle("/post/", http.HandlerFunc(srv.handleSinglePost))
 	/**
 	/posts - all posts
 	/posts/1 - first 10?
@@ -43,8 +44,17 @@ func (b *BlogServer) handleAllPosts(w http.ResponseWriter, r *http.Request) {
 
 func (b *BlogServer) handleSinglePost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", jsonContentType)
+	parsed := strings.Split(r.URL.Path, "/post/")
 
-	js, _ := json.MarshalIndent(b.posts[0], "", "\t")
+	if len(parsed) != 2 {
+		//handle URL incorrectly parsed case
+	}
+
+	post := getPostBySlug(parsed[1])
+	if post == nil {
+		//handle post not found
+	}
+	js, _ := json.MarshalIndent(post, "\t", "\t")
 	w.WriteHeader(http.StatusOK)
 	w.Write(js)
 }
