@@ -2,6 +2,7 @@ package blogposts
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 )
@@ -24,7 +25,6 @@ func NewBlogServer(posts []Post) *BlogServer {
 	/posts - all posts
 	/posts/1 - first 10?
 	/posts/2 - next 10?
-	/post/this-is-a-slug - specific post
 	*/
 	srv.Handler = router
 
@@ -39,7 +39,7 @@ func (b *BlogServer) handleAllPosts(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "The server encountered a problem and could not process your request.", http.StatusInternalServerError)
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Write(js)
+	_, _ = w.Write(js)
 }
 
 func (b *BlogServer) handleSinglePost(w http.ResponseWriter, r *http.Request) {
@@ -50,11 +50,22 @@ func (b *BlogServer) handleSinglePost(w http.ResponseWriter, r *http.Request) {
 		//handle URL incorrectly parsed case
 	}
 
-	post := getPostBySlug(parsed[1])
-	if post == nil {
-		//handle post not found
+	post, err := getPostBySlug(b.posts, parsed[1])
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		_, _ = w.Write([]byte(err.Error()))
+		return
 	}
 	js, _ := json.MarshalIndent(post, "\t", "\t")
 	w.WriteHeader(http.StatusOK)
-	w.Write(js)
+	_, _ = w.Write(js)
+}
+
+func getPostBySlug(posts []Post, slug string) (Post, error) {
+	for _, post := range posts {
+		if post.Slug == slug {
+			return post, nil
+		}
+	}
+	return Post{}, fmt.Errorf("post not found: %s", slug)
 }

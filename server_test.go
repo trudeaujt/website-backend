@@ -72,6 +72,11 @@ func TestServer(t *testing.T) {
 			"two"
 		]
 	}`))
+		errReq := newSinglePostRequest("bad-slug")
+		errRes := httptest.NewRecorder()
+		server.ServeHTTP(errRes, errReq)
+
+		assertStatus(t, errRes.Code, http.StatusNotFound)
 	})
 }
 
