@@ -11,20 +11,24 @@ import (
 )
 
 func TestServer(t *testing.T) {
-	posts := []blogposts.Post{
-		{
+	posts := map[string]blogposts.Post{
+		"a_title": {
 			Title:       "A Title",
 			Slug:        "a_title",
 			Description: "Description",
 			Tags:        []string{"one", "two"},
 			Body:        "Body",
+			Published:   true,
+			Date:        "2023-01-17",
 		},
-		{
+		"a_title2": {
 			Title:       "A Title2",
 			Slug:        "a_title2",
 			Description: "Description2",
 			Tags:        []string{"two", "three"},
 			Body:        "Body2",
+			Published:   false,
+			Date:        "2020-09-17",
 		},
 	}
 	server := blogposts.NewBlogServer(posts)
@@ -35,26 +39,30 @@ func TestServer(t *testing.T) {
 		server.ServeHTTP(res, req)
 
 		assertStatus(t, res.Code, http.StatusOK)
-		assertBody(t, res.Body.Bytes(), []byte(`[
-	{
+		assertBody(t, res.Body.Bytes(), []byte(`{
+	"a_title": {
 		"title": "A Title",
 		"slug": "a_title",
 		"description": "Description",
 		"tags": [
 			"one",
 			"two"
-		]
+		],
+		"published": true,
+		"date": "2023-01-17"
 	},
-	{
+	"a_title2": {
 		"title": "A Title2",
 		"slug": "a_title2",
 		"description": "Description2",
 		"tags": [
 			"two",
 			"three"
-		]
+		],
+		"published": false,
+		"date": "2020-09-17"
 	}
-]`,
+}`,
 		))
 	})
 	t.Run("it returns a single post", func(t *testing.T) {
@@ -70,7 +78,9 @@ func TestServer(t *testing.T) {
 		"tags": [
 			"one",
 			"two"
-		]
+		],
+		"published": true,
+		"date": "2023-01-17"
 	}`))
 		errReq := newSinglePostRequest("bad-slug")
 		errRes := httptest.NewRecorder()

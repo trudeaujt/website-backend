@@ -10,22 +10,17 @@ import (
 const jsonContentType = "application/json"
 
 type BlogServer struct {
-	posts []Post
+	posts map[string]Post
 	http.Handler
 }
 
-func NewBlogServer(posts []Post) *BlogServer {
+func NewBlogServer(posts map[string]Post) *BlogServer {
 	srv := new(BlogServer)
 
 	srv.posts = posts
 	router := http.NewServeMux()
 	router.Handle("/posts", http.HandlerFunc(srv.handleAllPosts))
 	router.Handle("/post/", http.HandlerFunc(srv.handleSinglePost))
-	/**
-	/posts - all posts
-	/posts/1 - first 10?
-	/posts/2 - next 10?
-	*/
 	srv.Handler = router
 
 	return srv
@@ -61,11 +56,10 @@ func (b *BlogServer) handleSinglePost(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(js)
 }
 
-func getPostBySlug(posts []Post, slug string) (Post, error) {
-	for _, post := range posts {
-		if post.Slug == slug {
-			return post, nil
-		}
+func getPostBySlug(posts map[string]Post, slug string) (Post, error) {
+	post, ok := posts[slug]
+	if ok {
+		return post, nil
 	}
 	return Post{}, fmt.Errorf("post not found: %s", slug)
 }

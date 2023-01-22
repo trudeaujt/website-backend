@@ -4,21 +4,21 @@ import (
 	"io/fs"
 )
 
-func NewPostsFromFS(fileSystem fs.FS) ([]Post, error) {
+func NewPostsFromFS(fileSystem fs.FS) (map[string]Post, error) {
 	dir, err := fs.ReadDir(fileSystem, ".")
 
 	if err != nil {
 		return nil, err
 	}
 
-	var posts []Post
+	posts := make(map[string]Post)
 
 	for _, file := range dir {
 		post, err := getPost(fileSystem, file.Name())
 		if err != nil {
 			return nil, err
 		}
-		posts = append(posts, post)
+		posts[post.Slug] = post
 	}
 	return posts, nil
 }

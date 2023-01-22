@@ -16,6 +16,8 @@ type Post struct {
 	Description string   `json:"description"`
 	Tags        []string `json:"tags"`
 	Body        string   `json:"-"`
+	Published   bool     `json:"published"`
+	Date        string   `json:"date"`
 }
 
 func newPost(postFile io.Reader) (Post, error) {

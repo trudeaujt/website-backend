@@ -36,8 +36,8 @@ C`
 		if err != nil {
 			t.Fatal(err)
 		}
-		assertPosts(t, posts, []blogposts.Post{
-			{
+		assertPosts(t, posts, map[string]blogposts.Post{
+			"post_1": {
 				Title:       "Post 1",
 				Slug:        "post_1",
 				Description: "Description 1",
@@ -45,7 +45,7 @@ C`
 				Body: `First line
 Second line`,
 			},
-			{
+			"post_2": {
 				Title:       "Post 2",
 				Slug:        "post_2",
 				Description: "Description 2",
@@ -92,7 +92,7 @@ Second line`
 	})
 }
 
-func assertPosts(t *testing.T, got, want []blogposts.Post) {
+func assertPosts(t *testing.T, got, want map[string]blogposts.Post) {
 	t.Helper()
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("got %+v want %+v", got, want)
