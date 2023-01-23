@@ -65,7 +65,7 @@ func TestServer(t *testing.T) {
 }`,
 		))
 	})
-	t.Run("it returns a single post", func(t *testing.T) {
+	t.Run("it returns a single post as JSON on GET", func(t *testing.T) {
 		req := newSinglePostRequest("a_title")
 		res := httptest.NewRecorder()
 		server.ServeHTTP(res, req)

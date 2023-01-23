@@ -15,12 +15,16 @@ func TestBlogposts(t *testing.T) {
 			firstBody = `Title: Post 1
 Description: Description 1
 Tags: tdd, go
+Published: true
+Date: 2023/01/23
 ---
 First line
 Second line`
 			secondBody = `Tags: tdd2, go2
 Title: Post 2
 Description: Description 2
+Published: false
+Date: 2020/09/17
 ---
 A
 B
@@ -42,6 +46,8 @@ C`
 				Slug:        "post_1",
 				Description: "Description 1",
 				Tags:        []string{"tdd", "go"},
+				Published:   true,
+				Date:        "2023/01/23",
 				Body: `First line
 Second line`,
 			},
@@ -50,6 +56,8 @@ Second line`,
 				Slug:        "post_2",
 				Description: "Description 2",
 				Tags:        []string{"tdd2", "go2"},
+				Published:   false,
+				Date:        "2020/09/17",
 				Body: `A
 B
 C`,
@@ -73,6 +81,8 @@ C`,
 Title: Post 1
 this-should-throw-an-error: yes
 Tags: tdd, go
+Date: 2000/01/01
+Published: true
 ---
 First line
 Second line`

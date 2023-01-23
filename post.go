@@ -39,6 +39,14 @@ func newPost(postFile io.Reader) (Post, error) {
 			post.Description = parameter[1]
 		case "Tags":
 			post.Tags = strings.Split(parameter[1], ", ")
+		case "Published":
+			if strings.ToLower(parameter[1]) == "false" {
+				post.Published = false
+			} else {
+				post.Published = true
+			}
+		case "Date":
+			post.Date = parameter[1]
 		default:
 			return Post{}, errors.New(fmt.Sprintf("invalid parameter: %v", line))
 		}
